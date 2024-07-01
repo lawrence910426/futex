@@ -22,17 +22,23 @@ const StakePage = ({ contractAddress }) => {
     const contractABI = [
         "function get_stake_total() public view returns (uint256, uint256)",
         "function get_stake() public view returns (uint256, uint256)",
-        "function stake(uint256 amount, Side side) external"
+        "function stake(uint256 amount, Side side) external",
+        "function max_stake() public view returns (uint256)"
     ];
 
     const tokenContract = new ethers.Contract(tokenAddress, tokenABI, signer);
     const contract = new ethers.Contract(contractAddress, contractABI, signer);
 
     const handleStake = async () => {
+        if (parseFloat(stakeAmount) > parseFloat(maxStake)) {
+          alert('Your stake amount exceeds the maximum stake limit');
+          return;
+        }
+    
         // Approve the token transfer
         const tx = await tokenContract.approve(contractAddress, ethers.parseEther(stakeAmount));
         await tx.wait();
-
+    
         // Stake the tokens
         const tx2 = await contract.stake(ethers.parseEther(stakeAmount), side);
         await tx2.wait();
@@ -57,6 +63,15 @@ const StakePage = ({ contractAddress }) => {
 
         getStakeTotals();
         getUserStakes();
+    }, [contract]);
+
+    useEffect(() => {
+        const getMaxStake = async () => {
+            const maxStake = await contract.max_stake();
+            setMaxStake(ethers.utils.formatEther(maxStake));
+        };
+
+        getMaxStake();
     }, [contract]);
 
     return (
