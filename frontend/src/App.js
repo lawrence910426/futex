@@ -1,12 +1,15 @@
 import React from 'react';
-import ApproveTokenTransfer from './ApproveTokenTransfer';
+import Game from './Game/Game';
+import EnsureWalletConnection from './EnsureWalletConnection/EnsureWalletConnection';
 
 const App = () => {
   return (
     <div>
       <h1>Approve Token Transfer</h1>
-      <ApproveTokenTransfer />
-    </div>
+      <EnsureWalletConnection>
+        <Game />
+      </EnsureWalletConnection>
+  </div>
   );
 };
 

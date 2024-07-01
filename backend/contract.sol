@@ -89,4 +89,12 @@ contract Game {
         require(msg.sender == owner);
         outcome = _outcome;
     }
+
+    function get_stake_total() public view returns (uint256, uint256) {
+        return (Yes_Total, No_Total);
+    }
+
+    function get_stake() public view returns (uint256, uint256) {
+        return (Yes_Traders[msg.sender], No_Traders[msg.sender]);
+    }
 }
