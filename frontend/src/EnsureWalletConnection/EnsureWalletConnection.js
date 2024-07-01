@@ -26,7 +26,7 @@ const EnsureWalletConnection = ({ children }) => {
   }, []);
 
   if (!isConnected) {
-    return <div>Please connect to Metamask.</div>;
+    return <div>Please connect to your wallet or refresh your browser.</div>;
   }
 
   return React.Children.map(children, child => {
