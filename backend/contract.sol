@@ -19,6 +19,8 @@ contract Game {
     uint256 public Yes_Total;
     uint256 public No_Total;
 
+    uint256 public Maximum_Stake;
+
     mapping(address => uint256) public Yes_Traders;
     mapping(address => uint256) public No_Traders;
 
@@ -28,7 +30,7 @@ contract Game {
 
     Side public outcome;
 
-    constructor(address _usdtTokenAddress, uint _settlement, uint _stake_deadline) {
+    constructor(address _usdtTokenAddress, uint _settlement, uint _stake_deadline, uint256 _maximum_stake) {
         usdtToken = IERC20(_usdtTokenAddress);
 
         Yes_Total = 0;
@@ -36,6 +38,7 @@ contract Game {
         owner = msg.sender;
         stake_deadline = _stake_deadline;
         settlement = _settlement;
+        Maximum_Stake = _maximum_stake;
 
         outcome = Side.Unknown;
     }
@@ -43,6 +46,7 @@ contract Game {
     function stake(uint256 amount, Side side) external {
         require(side == Side.Yes || side == Side.No);
         require(block.timestamp < stake_deadline);
+        require(amount > 0 && amount + Yes_Total + No_Total <= Maximum_Stake, "Exceed maximum stake amount");
 
         // Receive the ERC-20 token transfer
         require(usdtToken.transferFrom(msg.sender, address(this), amount), "Transfer failed");
@@ -104,5 +108,9 @@ contract Game {
 
     function can_claim() public view returns (bool) {
         return outcome != Side.Unknown || block.timestamp > settlement;
+    }
+
+    function max_stake() public view returns (uint256) {
+        return Maximum_Stake - Yes_Total - No_Total;
     }
 }
