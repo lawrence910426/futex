@@ -97,4 +97,12 @@ contract Game {
     function get_stake() public view returns (uint256, uint256) {
         return (Yes_Traders[msg.sender], No_Traders[msg.sender]);
     }
+
+    function can_stake() public view returns (bool) {
+        return block.timestamp < stake_deadline;
+    }
+
+    function can_claim() public view returns (bool) {
+        return outcome != Side.Unknown || block.timestamp > settlement;
+    }
 }
