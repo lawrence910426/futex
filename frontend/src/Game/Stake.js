@@ -1,16 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 
-const StakePage = () => {
-    let config;
-
-    if (process.env.NODE_ENV === 'development') {
-        config = require('./config.development.json');
-    } else if (process.env.NODE_ENV === 'production') {
-        config = require('./config.production.json');
-    }
-
-    const contractAddress = config.CONTRACT_ADDRESS;
+const StakePage = ({ contractAddress }) => {
     const tokenAddress = process.env.REACT_APP_TOKEN_ADDRESS;
 
     const [stakeAmount, setStakeAmount] = useState('');

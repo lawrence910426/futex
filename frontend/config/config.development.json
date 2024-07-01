@@ -1,3 +1,7 @@
-{
-    "CONTRACT_ADDRESS": "your_development_contract_address"
-}
+[
+    {
+        "CONTRACT_ADDRESS": "your_development_contract_address",
+        "TITLE": "your_development_title",
+        "DESCRIPTION": "your_development_description"
+    }
+]

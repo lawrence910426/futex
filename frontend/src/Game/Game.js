@@ -1,10 +1,10 @@
 import React from 'react';
 import Stake from './Stake';
 
-const Game = () => {
+const Game = ({ title, description, contractAddress }) => {
     return (
         <div>
-            <Stake />
+            <Stake contractAddress={contractAddress} />
         </div>
     );
 };
