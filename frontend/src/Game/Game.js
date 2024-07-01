@@ -27,7 +27,10 @@ const Game = ({ title, description, contractAddress }) => {
 
     return (
         <div>
+            <h1>{title}</h1>
+            <p>{description}</p>
             {component}
+            <hr />
         </div>
     );
 };
