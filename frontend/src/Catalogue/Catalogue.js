@@ -1,11 +1,11 @@
 import React from 'react';
-import Game from '../Game';
+import Game from '../Game/Game';
 
 let config;
 if (process.env.NODE_ENV === 'development') {
-    config = require('./config.development.json');
+    config = require('../config/config.development.json');
 } else if (process.env.NODE_ENV === 'production') {
-    config = require('./config.production.json');
+    config = require('../config/config.production.json');
 }
 
 const GamesCatalogue = () => {

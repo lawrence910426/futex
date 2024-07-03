@@ -1,0 +1,12 @@
+[
+    {
+        "CONTRACT_ADDRESS": "0x2F1F82ce326FDDC2A045Cf17c22398697e88b9b7",
+        "TITLE": "Betting on Typhoon",
+        "DESCRIPTION": "Would the typhoon hit Taiwan in 2024?"
+    },
+    {
+        "CONTRACT_ADDRESS": "0x2F1F82ce326FDDC2A045Cf17c22398697e88b9b7",
+        "TITLE": "Betting on TSMC",
+        "DESCRIPTION": "Would price of TSMC reaches 1000 before 2024/12/31?"
+    }
+]
