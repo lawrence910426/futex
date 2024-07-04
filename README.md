@@ -1,5 +1,3 @@
-Here is the fluent development guide for Futex:
-
 # Futex
 
 # Development Guide
