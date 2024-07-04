@@ -1,12 +1,11 @@
 const { buildModule } = require("@nomicfoundation/hardhat-ignition/modules");
 
 module.exports = buildModule("Game", (m) => {
-  const tokenAddress = m.getParameter("tokenAddress");
-  const Game = m.contract("Game", [
-    tokenAddress,
+  const GameContract = m.contract("Game", [
+    m.getParameter("tokenAddress"),
     0,
     2147483647,
-    100
+    1000 * (1_000_000)
   ]);
-  return { Game };
+  return { GameContract };
 });

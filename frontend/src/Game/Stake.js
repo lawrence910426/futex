@@ -23,7 +23,6 @@ const StakePage = ({ contractAddress, tokenAddress }) => {
 
     const contractViewABI = [
         "function max_stake() public view returns (uint256)",
-
         "function Yes_Traders(address) view returns (uint256)",
         "function No_Traders(address) view returns (uint256)",
         "function Yes_Total() public view returns (uint256)",
