@@ -60,11 +60,21 @@ contract Game {
             // There is a result for the game.
             uint256 value = 0;
             if (outcome_win) {
-                Yes_Traders[msg.sender] * No_Total / Yes_Total + Yes_Traders[msg.sender];
+                // Split the pot
+                value = Yes_Traders[msg.sender] * No_Total / Yes_Total;
+                No_Total -= value;
+
+                // Take back the stake
+                value += Yes_Traders[msg.sender];
                 Yes_Total -= Yes_Traders[msg.sender];
                 Yes_Traders[msg.sender] = 0;
             } else {
-                No_Traders[msg.sender] * Yes_Total / No_Total + No_Traders[msg.sender];
+                // Split the pot
+                value = No_Traders[msg.sender] * Yes_Total / No_Total;
+                Yes_Total -= value;
+                
+                // Take back the stake
+                value += No_Traders[msg.sender];
                 No_Total -= No_Traders[msg.sender];
                 No_Traders[msg.sender] = 0;
             }

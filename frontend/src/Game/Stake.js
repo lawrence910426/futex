@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 
-const StakePage = ({ contractAddress }) => {
-    const tokenAddress = process.env.REACT_APP_TOKEN_ADDRESS;
-
+const StakePage = ({ contractAddress, tokenAddress }) => {
     const [stakeAmount, setStakeAmount] = useState('');
     const [side, setSide] = useState(0);
     const [yesPot, setYesPot] = useState(0);
@@ -37,17 +35,19 @@ const StakePage = ({ contractAddress }) => {
     const contractView = new ethers.Contract(contractAddress, contractViewABI, provider);
 
     const handleStake = async () => {
-        if (parseFloat(stakeAmount) > parseFloat(maxStake)) {
+        const size = ethers.parseUnits(stakeAmount, 6);
+
+        if (parseFloat(size) > parseFloat(maxStake)) {
           alert('Your stake amount exceeds the maximum stake limit');
           return;
         }
         
         // Approve the token transfer
-        const tx = await tokenContract.approve(contractAddress, ethers.parseUnits(stakeAmount, 6));
+        const tx = await tokenContract.approve(contractAddress, size);
         await tx.wait();
     
         // Stake the tokens
-        const tx2 = await contract.stake(stakeAmount, side);
+        const tx2 = await contract.stake(size, side === 1);
         await tx2.wait();
     };
 
@@ -58,25 +58,25 @@ const StakePage = ({ contractAddress }) => {
     useEffect(() => {
         const getStakeTotals = async () => {
             const yesTotal = await contractView.Yes_Total();
-            setYesPot(ethers.formatUnits(yesTotal, 0));
+            setYesPot(ethers.formatUnits(yesTotal, 6));
 
             const noTotal = await contractView.No_Total();
-            setNoPot(ethers.formatUnits(noTotal, 0));
+            setNoPot(ethers.formatUnits(noTotal, 6));
         };
 
         const getUserStakes = async () => {
             if (!signer) return;
             
             const yesBet = await contractView.Yes_Traders(await signer.getAddress());
-            setYesBet(ethers.formatUnits(yesBet, 0));
+            setYesBet(ethers.formatUnits(yesBet, 6));
 
             const noBet = await contractView.No_Traders(await signer.getAddress());
-            setNoBet(ethers.formatUnits(noBet, 0));
+            setNoBet(ethers.formatUnits(noBet, 6));
         };
 
         const getMaxStake = async () => {
-            const maxStake = await contractView.max_stake();
-            setMaxStake(ethers.formatUnits(maxStake, 0));
+            const mxStake = await contractView.max_stake();
+            setMaxStake(mxStake);
         };
 
         const loadSigner = async () => {

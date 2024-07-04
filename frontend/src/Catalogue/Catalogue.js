@@ -11,12 +11,13 @@ if (process.env.NODE_ENV === 'development') {
 const GamesCatalogue = () => {
     return (
         <div>
-            {config.map((game, index) => (
+            {config.GAMES.map((game, index) => (
                 <Game 
                     key={index}
                     title={game.TITLE}
                     description={game.DESCRIPTION}
                     contractAddress={game.CONTRACT_ADDRESS}
+                    tokenAddress={config.TOKEN_ADDRESS}
                 />
             ))}
         </div>

@@ -3,7 +3,7 @@ import Stake from './Stake';
 import Claim from './Claim';
 import { ethers } from 'ethers';
 
-const Game = ({ title, description, contractAddress }) => {    
+const Game = ({ title, description, contractAddress, tokenAddress }) => {    
     const [canStake, setCanStake] = useState(false);
     const contractABI = [
         "function can_stake() public view returns (bool)"
@@ -22,7 +22,7 @@ const Game = ({ title, description, contractAddress }) => {
 
     let component;
     if (canStake) {
-        component = <Stake contractAddress={contractAddress} />;
+        component = <Stake contractAddress={contractAddress} tokenAddress={tokenAddress} />;
     } else {
         component = <Claim contractAddress={contractAddress} />;
     }

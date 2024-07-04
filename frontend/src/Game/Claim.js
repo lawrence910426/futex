@@ -14,7 +14,7 @@ const Claim = ({ contractAddress }) => {
 
     const contractView = new ethers.Contract(contractAddress, contractABI, provider);
     const contract = new ethers.Contract(contractAddress, contractABI, signer);
-
+    
     useEffect(() => {
         const checkCanClaim = async () => {
             const canClaim = await contractView.can_claim();
