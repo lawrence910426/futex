@@ -13,7 +13,7 @@ const Game = ({ title, description, contractAddress, tokenAddress }) => {
     useEffect(() => {
         const checkCanStake = async () => {
             const contract = new ethers.Contract(contractAddress, contractABI, provider);
-            const canStake = false; //await contract.can_stake();
+            const canStake = await contract.can_stake();
             setCanStake(canStake);
         };
 
