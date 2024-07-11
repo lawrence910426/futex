@@ -11,14 +11,11 @@ Before you start, reset your location to the root directory of this repository.
 export SEED_PHRASE="your mnemonic phrase here"
 ```
 
-2. Navigate to the backend directory and install dependencies:
-```bash
-cd backend && npm install
-```
+2. Prepare a docker environment [Reference](https://docs.docker.com/guides/getting-started/get-docker-desktop/)
 
 3. Navigate to the scripts directory and run the deployment script:
 ```bash
-cd scripts && bash deploy.sh
+bash deploy.sh
 ```
 
 4. After deployment, fill in the `TOKEN_ADDRESS` and `CONTRACT_ADDRESS` in `config.development.json` using the terminal output.
