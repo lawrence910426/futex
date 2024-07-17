@@ -6,14 +6,14 @@
 
 Before you start, reset your location to the root directory of this repository.
 
-1. Set your mnemonic phrase into the environment variable `SEED_PHRASE`:
+1. Set your mnemonic phrase into the environment variable `SEED_PHRASE` and put it into `~/.bash_profile`:
 ```bash
 export SEED_PHRASE="your mnemonic phrase here"
 ```
 
 2. Prepare a docker environment [Reference](https://docs.docker.com/guides/getting-started/get-docker-desktop/)
 
-3. Navigate to the scripts directory and run the deployment script:
+3. Navigate to the backend directory with `cd backend` and run the deployment script:
 ```bash
 bash deploy.sh
 ```
@@ -24,19 +24,7 @@ bash deploy.sh
 
 ### Restarting the Ethereum Development Server
 
-If you need to restart the Ethereum development server:
-
-1. Attach to the existing tmux session:
-```bash
-tmux attach -t hardhat-node
-```
-
-2. Stop the current node by pressing `Ctrl+C`.
-
-3. Restart the Hardhat node:
-```bash
-npx hardhat node
-```
+Kill the current session and restart with `bash deploy.sh`.
 
 4. Clear the nonce in MetaMask.
 
