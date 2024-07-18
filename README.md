@@ -24,9 +24,7 @@ bash deploy.sh
 
 ### Restarting the Ethereum Development Server
 
-Kill the current session and restart with `bash deploy.sh`.
-
-4. Clear the nonce in MetaMask.
+Kill the current session and restart with `bash deploy.sh` and clear the nonce in MetaMask.
 
 ## Start the React.js Development Server
 
