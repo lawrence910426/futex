@@ -11,7 +11,6 @@ docker run -v $(pwd)/build:/opt/build frontend-build
 cp -r build ../nginx
 cd ..
 
-
 placeholder="\$is_behind_cloudflare"
 
 if [[ "$1" == "--cloudflare" ]]; then
@@ -22,8 +21,9 @@ else
     echo "Enabled Cloudflare. Updating nginx.conf..."
 fi
 
+rm nginx/nginx.conf
 cp nginx/nginx.conf.template nginx/nginx.conf
-sed -i "" "s/${placeholder}/${replacement}/g" "nginx/nginx.conf"
+awk -v placeholder="${placeholder}" -v replacement="${replacement}" '{gsub(placeholder, replacement); print}' nginx/nginx.conf.template > nginx/nginx.conf
 
 docker compose build --no-cache
 docker compose up
