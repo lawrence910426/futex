@@ -6,3 +6,5 @@ COPY . .
 RUN npm install --legacy-peer-deps
 RUN npm run build
 
+WORKDIR /opt
+CMD [ "cp", "-r", "/app/build", "/opt" ]
