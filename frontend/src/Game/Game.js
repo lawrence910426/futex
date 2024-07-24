@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import Stake from './Stake';
 import Claim from './Claim';
 import { ethers } from 'ethers';
-import { useParams } from 'react-router-dom';
 
-const Game = ({ tokenAddress }) => {    
-    const { contractAddress } = useParams();
+const Game = ({ tokenAddress }) => {   
+    const query = new URLSearchParams(window.location.search);
+    const contractAddress = query.get('contractAddress');
 
     const [canStake, setCanStake] = useState(false);
     const contractABI = [
@@ -31,9 +31,7 @@ const Game = ({ tokenAddress }) => {
     }
 
     return (
-        <div>
-            {component}
-        </div>
+        <div> {component} </div>
     );
 };
 
