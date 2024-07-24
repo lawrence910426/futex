@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react';
 import Stake from './Stake';
 import Claim from './Claim';
 import { ethers } from 'ethers';
+import { useParams } from 'react-router-dom';
 
-const Game = ({ title, description, contractAddress, tokenAddress }) => {    
+const Game = ({ tokenAddress }) => {    
+    const { contractAddress } = useParams();
+
     const [canStake, setCanStake] = useState(false);
     const contractABI = [
         "function can_stake() public view returns (bool)"
@@ -29,10 +32,7 @@ const Game = ({ title, description, contractAddress, tokenAddress }) => {
 
     return (
         <div>
-            <h1>{title}</h1>
-            <p>{description}</p>
             {component}
-            <hr />
         </div>
     );
 };
