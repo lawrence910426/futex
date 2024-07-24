@@ -47,5 +47,17 @@ If you need to restart the React.js development environment, stop the current se
 npm run start
 ```
 
-# Build and Push to Production
-TBD.
+# Run a production ready instance
+
+Put the environment variables to your `~/.bash_profile`
+```
+export MYSQL_ROOT_PASSWORD=somewordpress
+export MYSQL_DATABASE=wordpress
+export MYSQL_USER=wordpress
+export MYSQL_PASSWORD=wordpress
+export WORDPRESS_DB_USER=wordpress
+export WORDPRESS_DB_PASSWORD=wordpress
+export WORDPRESS_DB_NAME=wordpress
+```
+
+And then, run `bash deploy.sh`.
