@@ -1,5 +1,72 @@
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
+import './App.css';
+
+const BettingComponent = ({ onAmountChange, onSideChange, handleStake }) => {
+    const [amount, setAmount] = useState(50);
+    const [selectedSide, setSelectedSide] = useState(1);
+    const [error, setError] = useState('');
+
+
+    const handleAmountChange = (change) => {
+    const newAmount = (parseFloat(amount) + change).toString();
+        if (parseFloat(newAmount) >= 0) {
+            if (parseFloat(newAmount) > 100) {
+                setError('金额應小於100');
+            } else {
+                setError('');
+                setAmount(parseFloat(newAmount));
+                onAmountChange(newAmount);
+            }
+        }
+    };
+
+    const handleSideSelection = (side) => {
+        setSelectedSide(side);
+        onSideChange(side);
+    };
+
+    
+
+    return (
+        <div className="betting-container">
+            <div className="betting-header">賠率</div>
+            <div className="betting-options">
+                <button
+                    className={`betting-option ${selectedSide === 1 ? 'active' : ''}`}
+                    onClick={() => handleSideSelection(1)}
+                >
+                    YES 1.8
+                </button>
+                <button
+                    className={`betting-option ${selectedSide === 0 ? 'active no' : ''}`}
+                    onClick={() => handleSideSelection(0)}
+                >
+                    NO 2.2
+                </button>
+            </div>
+            <div className="betting-outcome">下標金額</div>
+            <div className="betting-amount-wrapper">
+                <div className={`betting-amount ${error ? 'error' : ''}`}>
+                    <button className="amount-control" onClick={() => handleAmountChange(-10)}>-</button>
+                    <input type="text" value={amount} readOnly style={{ color: amount >= 100 ? '#CA5724' : 'black' }} />
+                    <button 
+                        className="amount-control" 
+                        onClick={() => handleAmountChange(10)} 
+                        disabled={amount > 100}
+                        style={amount >= 100 ? { backgroundColor: '#F0F0F0', color: '#D9D9D9', cursor: 'not-allowed' } : {}}
+                    >+</button>
+                </div>
+                {error && <div className="error">{error}</div>}
+            </div>
+            <button className={`bet-button ${selectedSide === 0 ? 'no' : ''}`} onClick={handleStake}>
+                BET {selectedSide === 1 ? 'YES' : 'NO'}
+                <br />
+                <span className="to-win">To win USDT {(amount * (selectedSide === 1 ? 1.8 : 2.2)).toFixed(2)}</span>
+            </button>
+        </div>
+    );
+};
 
 const StakePage = ({ contractAddress, tokenAddress }) => {
     const [stakeAmount, setStakeAmount] = useState('');
@@ -12,7 +79,6 @@ const StakePage = ({ contractAddress, tokenAddress }) => {
     const [signer, setSigner] = useState(null);
 
     const provider = new ethers.BrowserProvider(window.ethereum);
-
     const tokenABI = [
         "function approve(address _spender, uint256 _value) public returns (bool)",
     ];
@@ -34,6 +100,11 @@ const StakePage = ({ contractAddress, tokenAddress }) => {
     const contractView = new ethers.Contract(contractAddress, contractViewABI, provider);
 
     const handleStake = async () => {
+        if (!stakeAmount || isNaN(stakeAmount)) {
+            alert('Please enter a valid stake amount');
+            return;
+        }
+        const amountToStake = stakeAmount === '' ? '0' : stakeAmount.toString();
         const size = ethers.parseUnits(stakeAmount, 6);
 
         if (parseFloat(size) > parseFloat(maxStake)) {
@@ -91,16 +162,31 @@ const StakePage = ({ contractAddress, tokenAddress }) => {
 
     return (
         <div>
-            <input type="number" value={stakeAmount} onChange={e => setStakeAmount(e.target.value)} />
-            <button onClick={handleStake}>Stake</button>
-            <button onClick={() => handleSideSelection(1)}>Bet Yes</button>
-            <button onClick={() => handleSideSelection(0)}>Bet No</button>
-            <p>Yes Pot: {yesPot}</p>
-            <p>No Pot: {noPot}</p>
-            <p>Your Yes Bet: {yesBet}</p>
-            <p>Your No Bet: {noBet}</p>
+            <BettingComponent
+                onAmountChange={setStakeAmount}
+                onSideChange={setSide}
+                handleStake={handleStake}
+            />
         </div>
     );
 };
 
+const App = () => {
+    return (
+        <div>
+            <StakePage 
+                contractAddress="0xYourContractAddress1" 
+                tokenAddress="0xYourTokenAddress1"
+                title="Betting on Typhoon"
+                description="Would the typhoon hit Taiwan in 2024?"
+            />
+            <StakePage 
+                contractAddress="0xYourContractAddress2" 
+                tokenAddress="0xYourTokenAddress2"
+                title="Betting on TSMC"
+                description="Would price of TSMC reaches 1000 before 2024/12/31?"
+            />
+        </div>
+    );
+};
 export default StakePage;
