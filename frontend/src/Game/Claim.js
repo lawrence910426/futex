@@ -37,8 +37,8 @@ const Claim = ({ contractAddress }) => {
 
     return (
         <div>
-            <button onClick={handleClaim} disabled={!canClaim}>
-                Claim Reward
+            <button onClick={handleClaim} disabled={!canClaim} style={{ backgroundColor: 'lightblue' }}>
+            Claim Reward
             </button>
         </div>
     );
