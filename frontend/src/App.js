@@ -10,9 +10,12 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 const App = () => {
+  const query = new URLSearchParams(window.location.search);
+  const contractAddress = query.get('contractAddress') || config.CONTRACT_ADDRESS;
+
   return (
     <EnsureWalletConnection>
-      <Game tokenAddress={config.TOKEN_ADDRESS} />
+      <Game tokenAddress={config.TOKEN_ADDRESS} contractAddress={contractAddress} />
     </EnsureWalletConnection>
   );
 };

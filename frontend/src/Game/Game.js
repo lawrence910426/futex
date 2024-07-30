@@ -3,10 +3,7 @@ import Stake from './Stake';
 import Claim from './Claim';
 import { ethers } from 'ethers';
 
-const Game = ({ tokenAddress }) => {   
-    const query = new URLSearchParams(window.location.search);
-    const contractAddress = query.get('contractAddress');
-
+const Game = ({ tokenAddress, contractAddress }) => {   
     const [canStake, setCanStake] = useState(false);
     const contractABI = [
         "function can_stake() public view returns (bool)"
