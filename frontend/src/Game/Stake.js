@@ -2,7 +2,39 @@ import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import './App.css';
 
-const BettingComponent = ({ onAmountChange, onSideChange, handleStake }) => {
+const CurrentPotStatus = ({ yesBet, noBet }) => {
+    return (
+        <div className="pot-container">
+            <div className="option yes-option">
+                <span className="label">Yes pot</span>
+                <span className="amount">USDT {yesBet}</span>
+            </div>
+            <div className="divider"></div>
+            <div className="option no-option">
+                <span className="label">No Bet</span>
+                <span className="amount">USDT {noBet}</span>
+            </div>
+        </div>
+    );
+};
+
+const BettingResult = ({ yesPot, noPot }) => {
+    return (
+        <div className="pot-container">
+            <div className="option yes-option">
+                <span className="label">My yes pot</span>
+                <span className="amount">USDT {yesPot}</span>
+            </div>
+            <div className="divider"></div>
+            <div className="option no-option">
+                <span className="label">My no pot</span>
+                <span className="amount">USDT {noPot}</span>
+            </div>
+        </div>
+    );
+};
+
+const BettingComponent = ({ onAmountChange, onSideChange, handleStake, yesPot, noPot }) => {
     const [amount, setAmount] = useState(50);
     const [selectedSide, setSelectedSide] = useState(1);
     const [error, setError] = useState('');
@@ -68,6 +100,7 @@ const BettingComponent = ({ onAmountChange, onSideChange, handleStake }) => {
     );
 };
 
+
 const StakePage = ({ contractAddress, tokenAddress }) => {
     const [stakeAmount, setStakeAmount] = useState('');
     const [side, setSide] = useState(0);
@@ -119,6 +152,13 @@ const StakePage = ({ contractAddress, tokenAddress }) => {
         // Stake the tokens
         const tx2 = await contract.stake(size, side === 1);
         await tx2.wait();
+
+        // Update the pots after staking
+        const yesTotal = await contractView.Yes_Total(); /* 修改：更新 Yes_Total */
+        setYesPot(ethers.formatUnits(yesTotal, 6)); /* 修改：設定 yesPot */
+
+        const noTotal = await contractView.No_Total(); /* 修改：更新 No_Total */
+        setNoPot(ethers.formatUnits(noTotal, 6)); /* 修改：設定 noPot */
     };
 
     const handleSideSelection = (selectedSide) => {
@@ -162,11 +202,13 @@ const StakePage = ({ contractAddress, tokenAddress }) => {
 
     return (
         <div>
+            <CurrentPotStatus yesBet={yesBet} noBet={noBet} />
             <BettingComponent
                 onAmountChange={setStakeAmount}
                 onSideChange={setSide}
-                handleStake={handleStake}
+                handleStake={handleStake}  
             />
+            <BettingResult yesPot={yesPot} noPot={noPot} /> {/* 修改：新增 BettingResult 元件 */}
         </div>
     );
 };
