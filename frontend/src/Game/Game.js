@@ -22,9 +22,10 @@ const Game = ({ tokenAddress, contractAddress }) => {
 
     let component;
     if (canStake) {
-        component = <Stake contractAddress={contractAddress} tokenAddress={tokenAddress} />;
-    } else {
         component = <Claim contractAddress={contractAddress} />;
+    } else {
+        component = <Stake contractAddress={contractAddress} tokenAddress={tokenAddress} />;
+        
     }
 
     return (
