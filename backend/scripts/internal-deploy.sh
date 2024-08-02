@@ -1,4 +1,4 @@
-npx hardhat node > /dev/null &
+npx hardhat node > /mnt/run.log &
 
 sleep 5
 

@@ -3,7 +3,7 @@ import { ethers } from 'ethers';
 import './claim.css';
 
 
-const Claim = ({ contractAddress }) => {
+const Claim = ({ contractAddress }) => {    
     const [canClaim, setCanClaim] = useState(false);
     const [signer, setSigner] = useState(null);
     const [manualClaim, setManualClaim] = useState(false);
