@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 
-const Claim = ({ contractAddress }) => {
+const Claim = ({ contractAddress }) => {    
     const [canClaim, setCanClaim] = useState(false);
     const [signer, setSigner] = useState(null);
 
