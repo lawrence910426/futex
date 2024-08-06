@@ -103,7 +103,7 @@ const BettingComponent = ({ onAmountChange, onSideChange, handleStake, yesPot, n
 
 const StakePage = ({ contractAddress, tokenAddress }) => {
     const [stakeAmount, setStakeAmount] = useState('');
-    const [side, setSide] = useState(0);
+    const [side, setSide] = useState(1);
     const [yesPot, setYesPot] = useState(0);
     const [noPot, setNoPot] = useState(0);
     const [yesBet, setYesBet] = useState(0);
