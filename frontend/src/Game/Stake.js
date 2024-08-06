@@ -213,22 +213,4 @@ const StakePage = ({ contractAddress, tokenAddress }) => {
     );
 };
 
-const App = () => {
-    return (
-        <div>
-            <StakePage 
-                contractAddress="0xYourContractAddress1" 
-                tokenAddress="0xYourTokenAddress1"
-                title="Betting on Typhoon"
-                description="Would the typhoon hit Taiwan in 2024?"
-            />
-            <StakePage 
-                contractAddress="0xYourContractAddress2" 
-                tokenAddress="0xYourTokenAddress2"
-                title="Betting on TSMC"
-                description="Would price of TSMC reaches 1000 before 2024/12/31?"
-            />
-        </div>
-    );
-};
 export default StakePage;
