@@ -34,31 +34,44 @@ const BettingResult = ({ yesPot, noPot }) => {
     );
 };
 
-const BettingComponent = ({ onAmountChange, onSideChange, handleStake, yesPot, noPot }) => {
+const BettingComponent = ({ maxStake, contract, tokenContract }) => {
     const [amount, setAmount] = useState(50);
     const [selectedSide, setSelectedSide] = useState(1);
     const [error, setError] = useState('');
 
-
     const handleAmountChange = (change) => {
-    const newAmount = (parseFloat(amount) + change).toString();
+        const newAmount = (parseFloat(amount) + change).toString();
         if (parseFloat(newAmount) >= 0) {
-            if (parseFloat(newAmount) > 100) {
-                setError('金额應小於100');
+            if (parseFloat(newAmount) > maxStake) {
+                setError('金额超過最大下注金額：' + maxStake);
             } else {
                 setError('');
                 setAmount(parseFloat(newAmount));
-                onAmountChange(newAmount);
             }
         }
     };
 
     const handleSideSelection = (side) => {
         setSelectedSide(side);
-        onSideChange(side);
     };
 
+
+    const handleStake = async () => {
+        const size = ethers.parseUnits(amount.toString(), 6);
+        
+        if(parseFloat(size) > parseFloat(maxStake)) {
+            setError('金额超過最大下注金額：' + maxStake);
+            return;
+        }
+        
+        // Approve the token transfer
+        const tx = await tokenContract.approve(contract.target, size);
+        await tx.wait();
     
+        // Stake the tokens
+        const tx2 = await contract.stake(size, selectedSide === 1);
+        await tx2.wait();
+    };
 
     return (
         <div className="betting-container">
@@ -81,12 +94,12 @@ const BettingComponent = ({ onAmountChange, onSideChange, handleStake, yesPot, n
             <div className="betting-amount-wrapper">
                 <div className={`betting-amount ${error ? 'error' : ''}`}>
                     <button className="amount-control" onClick={() => handleAmountChange(-10)}>-</button>
-                    <input type="text" value={amount} readOnly style={{ color: amount >= 100 ? '#CA5724' : 'black' }} />
+                    <input type="text" value={amount} readOnly style={{ color: amount >= maxStake ? '#CA5724' : 'black' }} />
                     <button 
                         className="amount-control" 
                         onClick={() => handleAmountChange(10)} 
-                        disabled={amount > 100}
-                        style={amount >= 100 ? { backgroundColor: '#F0F0F0', color: '#D9D9D9', cursor: 'not-allowed' } : {}}
+                        disabled={amount > maxStake}
+                        style={amount >= maxStake ? { backgroundColor: '#F0F0F0', color: '#D9D9D9', cursor: 'not-allowed' } : {}}
                     >+</button>
                 </div>
                 {error && <div className="error">{error}</div>}
@@ -102,23 +115,24 @@ const BettingComponent = ({ onAmountChange, onSideChange, handleStake, yesPot, n
 
 
 const StakePage = ({ contractAddress, tokenAddress }) => {
-    const [stakeAmount, setStakeAmount] = useState('');
-    const [side, setSide] = useState(1);
     const [yesPot, setYesPot] = useState(0);
     const [noPot, setNoPot] = useState(0);
     const [yesBet, setYesBet] = useState(0);
     const [noBet, setNoBet] = useState(0);
-    const [maxStake, setMaxStake] = useState(0);
     const [signer, setSigner] = useState(null);
+    const [maxStake, setMaxStake] = useState(0);
 
     const provider = new ethers.BrowserProvider(window.ethereum);
+
     const tokenABI = [
         "function approve(address _spender, uint256 _value) public returns (bool)",
     ];
+    const tokenContract = new ethers.Contract(tokenAddress, tokenABI, signer);
 
     const contractABI = [
         "function stake(uint256 amount, bool is_win) external",
     ];
+    const contract = new ethers.Contract(contractAddress, contractABI, signer);
 
     const contractViewABI = [
         "function max_stake() public view returns (uint256)",
@@ -127,43 +141,7 @@ const StakePage = ({ contractAddress, tokenAddress }) => {
         "function Yes_Total() public view returns (uint256)",
         "function No_Total() public view returns (uint256)",
     ];
-
-    const tokenContract = new ethers.Contract(tokenAddress, tokenABI, signer);
-    const contract = new ethers.Contract(contractAddress, contractABI, signer);
     const contractView = new ethers.Contract(contractAddress, contractViewABI, provider);
-
-    const handleStake = async () => {
-        if (!stakeAmount || isNaN(stakeAmount)) {
-            alert('Please enter a valid stake amount');
-            return;
-        }
-        const amountToStake = stakeAmount === '' ? '0' : stakeAmount.toString();
-        const size = ethers.parseUnits(stakeAmount, 6);
-
-        if (parseFloat(size) > parseFloat(maxStake)) {
-          alert('Your stake amount exceeds the maximum stake limit');
-          return;
-        }
-        
-        // Approve the token transfer
-        const tx = await tokenContract.approve(contractAddress, size);
-        await tx.wait();
-    
-        // Stake the tokens
-        const tx2 = await contract.stake(size, side === 1);
-        await tx2.wait();
-
-        // Update the pots after staking
-        const yesTotal = await contractView.Yes_Total(); /* 修改：更新 Yes_Total */
-        setYesPot(ethers.formatUnits(yesTotal, 6)); /* 修改：設定 yesPot */
-
-        const noTotal = await contractView.No_Total(); /* 修改：更新 No_Total */
-        setNoPot(ethers.formatUnits(noTotal, 6)); /* 修改：設定 noPot */
-    };
-
-    const handleSideSelection = (selectedSide) => {
-        setSide(selectedSide);
-    };
 
     useEffect(() => {
         const getStakeTotals = async () => {
@@ -203,12 +181,12 @@ const StakePage = ({ contractAddress, tokenAddress }) => {
     return (
         <div>
             <CurrentPotStatus yesBet={yesBet} noBet={noBet} />
-            <BettingComponent
-                onAmountChange={setStakeAmount}
-                onSideChange={setSide}
-                handleStake={handleStake}  
+            <BettingComponent 
+                maxStake={maxStake}
+                tokenContract={tokenContract}
+                contract={contract}
             />
-            <BettingResult yesPot={yesPot} noPot={noPot} /> {/* 修改：新增 BettingResult 元件 */}
+            <BettingResult yesPot={yesPot} noPot={noPot} />
         </div>
     );
 };
