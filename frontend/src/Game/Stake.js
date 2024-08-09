@@ -36,7 +36,7 @@ const BettingResult = ({ yesPot, noPot }) => {
 
 const BettingComponent = ({ maxStake, contract, tokenContract }) => {
     const [amount, setAmount] = useState(50);
-    const [selectedSide, setSelectedSide] = useState(1);
+    const [selectedSide, setSelectedSide] = useState(0);
     const [error, setError] = useState('');
 
     const handleAmountChange = (change) => {

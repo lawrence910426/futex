@@ -19,7 +19,7 @@ const Game = ({}) => {
         component = <Stake contractAddress={contractAddress} tokenAddress={tokenAddress} />;
     } else {
         component = <Claim contractAddress={contractAddress} />;
-    }
+    } 
 
     return (
         <div> {component} </div>
