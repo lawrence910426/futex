@@ -67,6 +67,8 @@ const BettingComponent = ({ maxStake, contract, tokenContract }) => {
         // Approve the token transfer
         const tx = await tokenContract.approve(contract.target, size);
         await tx.wait();
+
+        // TODO: This would wait for very long.
     
         // Stake the tokens
         const tx2 = await contract.stake(size, selectedSide === 1);
