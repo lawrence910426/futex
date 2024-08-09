@@ -6,4 +6,4 @@ docker kill hardhat-backend
 docker rm hardhat-backend
 
 docker build -t hardhat-backend .
-docker run -p 8545:8545 --name hardhat-backend -e SEED_PHRASE hardhat-backend
+docker run -p 8545:8545 -v .:/mnt/ --name hardhat-backend -e SEED_PHRASE hardhat-backend
