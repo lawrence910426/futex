@@ -36,7 +36,7 @@ const BettingResult = ({ yesPot, noPot }) => {
 
 const BettingComponent = ({ onAmountChange, onSideChange, handleStake, yesPot, noPot }) => {
     const [amount, setAmount] = useState(50);
-    const [selectedSide, setSelectedSide] = useState(1);
+    const [selectedSide, setSelectedSide] = useState(0);
     const [error, setError] = useState('');
 
 
@@ -103,7 +103,7 @@ const BettingComponent = ({ onAmountChange, onSideChange, handleStake, yesPot, n
 
 const StakePage = ({ contractAddress, tokenAddress }) => {
     const [stakeAmount, setStakeAmount] = useState('');
-    const [side, setSide] = useState(0);
+    const [side, setSide] = useState(1);// 修正：預設為 1 (YES)
     const [yesPot, setYesPot] = useState(0);
     const [noPot, setNoPot] = useState(0);
     const [yesBet, setYesBet] = useState(0);
@@ -150,7 +150,7 @@ const StakePage = ({ contractAddress, tokenAddress }) => {
         await tx.wait();
     
         // Stake the tokens
-        const tx2 = await contract.stake(size, side === 1);
+        const tx2 = await contract.stake(size, side === 1);// 修正：使用最新的 side 值
         await tx2.wait();
 
         // Update the pots after staking
