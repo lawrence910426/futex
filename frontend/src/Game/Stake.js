@@ -38,6 +38,8 @@ const BettingComponent = ({ maxStake, contract, tokenContract }) => {
     const [amount, setAmount] = useState(50);
     const [selectedSide, setSelectedSide] = useState(0);
     const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
     const handleAmountChange = (change) => {
         const newAmount = (parseFloat(amount) + change).toString();
@@ -57,24 +59,40 @@ const BettingComponent = ({ maxStake, contract, tokenContract }) => {
 
 
     const handleStake = async () => {
-        const size = ethers.parseUnits(amount.toString(), 6);
-        
-        if(parseFloat(size) > parseFloat(maxStake)) {
-            setError('金额超過最大下注金額：' + maxStake);
-            return;
-        }
-        
-        // Approve the token transfer
-        const tx = await tokenContract.approve(contract.target, size);
-        await tx.wait();
+        setIsLoading(true); // 開始顯示等待視窗
 
-        // TODO: This would wait for very long.
+        try {
+            const size = ethers.parseUnits(amount.toString(), 6);
+            
+            if(parseFloat(size) > parseFloat(maxStake)) {
+                setError('金额超過最大下注金額：' + maxStake);
+                setIsLoading(false);
+                return;
+            }
+            
+            // Approve the token transfer
+            const tx = await tokenContract.approve(contract.target, size);
+            await tx.wait();
     
-        // Stake the tokens
-        const tx2 = await contract.stake(size, selectedSide === 1);
-        await tx2.wait();
+            // Stake the tokens
+            const tx2 = await contract.stake(size, selectedSide === 1);
+            await tx2.wait();
+
+            // 成功後顯示成功訊息
+            setShowSuccessMessage(true);
+            setTimeout(() => {
+                setShowSuccessMessage(false); // 三秒後隱藏成功訊息
+            }, 3000);
+
+        } catch (err) {
+            console.error('下注過程出錯:', err);
+            setError('下注過程出錯，請重試。');
+        } finally {
+            setIsLoading(false); // 隱藏等待視窗
+        }
     };
 
+    
     return (
         <div className="betting-container">
             <div className="betting-header">賠率</div>
@@ -111,6 +129,25 @@ const BettingComponent = ({ maxStake, contract, tokenContract }) => {
                 <br />
                 <span className="to-win">To win USDT {(amount * (selectedSide === 1 ? 1.8 : 2.2)).toFixed(2)}</span>
             </button>
+
+            {isLoading && (
+                <div className="loading-modal">
+                    <div className="loading-content">
+                        <h2 className="loading-text">
+                            點擊下一頁,批准及確認以下注，<br />
+                            並耐心等候......
+                        </h2>
+                    </div>
+                </div>
+            )}
+
+            {showSuccessMessage && ( // 顯示成功訊息
+                <div className="success-modal">
+                    <div className="success-content">
+                        <h2 className="success-text">下注成功！</h2>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

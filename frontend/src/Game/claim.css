@@ -86,3 +86,17 @@ body {
 .reward-content.unavailable {
     display: block;
 }
+
+.claiming-message span {
+    color: #D4AF37;  
+    font-size: 24px;
+    margin-bottom: 8px;
+    font-weight: bold; 
+}
+
+.success-message span {
+    color: #D4AF37;  
+    font-size: 24px;
+    margin-bottom: 8px;
+    font-weight: bold; 
+}
