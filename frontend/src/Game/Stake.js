@@ -34,12 +34,23 @@ const BettingResult = ({ yesPot, noPot }) => {
     );
 };
 
-const BettingComponent = ({ maxStake, contract, tokenContract }) => {
+const BettingComponent = ({ maxStake, contract, tokenContract, yesPot, noPot }) => {
     const [amount, setAmount] = useState(50);
     const [selectedSide, setSelectedSide] = useState(0);
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+
+    const calculateWinOdds = (noTotal, yesTotal, bet) => {
+        return (noTotal / (yesTotal + bet)) * bet + 1;
+    };
+
+    const calculateLossOdds = (yesTotal, noTotal, bet) => {
+        return (yesTotal / (noTotal + bet)) * bet + 1;
+    };
+
+    const winOdds = calculateWinOdds(noPot, yesPot, amount);
+    const lossOdds = calculateLossOdds(yesPot, noPot, amount);
 
     const handleAmountChange = (change) => {
         const newAmount = (parseFloat(amount) + change).toString();
@@ -56,7 +67,6 @@ const BettingComponent = ({ maxStake, contract, tokenContract }) => {
     const handleSideSelection = (side) => {
         setSelectedSide(side);
     };
-
 
     const handleStake = async () => {
         setIsLoading(true); // 開始顯示等待視窗
@@ -92,7 +102,6 @@ const BettingComponent = ({ maxStake, contract, tokenContract }) => {
         }
     };
 
-    
     return (
         <div className="betting-container">
             <div className="betting-header">賠率</div>
@@ -101,13 +110,13 @@ const BettingComponent = ({ maxStake, contract, tokenContract }) => {
                     className={`betting-option ${selectedSide === 1 ? 'active' : ''}`}
                     onClick={() => handleSideSelection(1)}
                 >
-                    YES 1.8
+                    YES {winOdds.toFixed(2)}
                 </button>
                 <button
                     className={`betting-option ${selectedSide === 0 ? 'active no' : ''}`}
                     onClick={() => handleSideSelection(0)}
                 >
-                    NO 2.2
+                    NO {lossOdds.toFixed(2)}
                 </button>
             </div>
             <div className="betting-outcome">下標金額</div>
@@ -127,7 +136,7 @@ const BettingComponent = ({ maxStake, contract, tokenContract }) => {
             <button className={`bet-button ${selectedSide === 0 ? 'no' : ''}`} onClick={handleStake}>
                 BET {selectedSide === 1 ? 'YES' : 'NO'}
                 <br />
-                <span className="to-win">To win USDT {(amount * (selectedSide === 1 ? 1.8 : 2.2)).toFixed(2)}</span>
+                <span className="to-win">To win USDT {(amount * (selectedSide === 1 ? winOdds : lossOdds)).toFixed(2)}</span>
             </button>
 
             {isLoading && (
@@ -224,6 +233,8 @@ const StakePage = ({ contractAddress, tokenAddress }) => {
                 maxStake={maxStake}
                 tokenContract={tokenContract}
                 contract={contract}
+                yesPot={yesPot}
+                noPot={noPot}
             />
             <BettingResult yesPot={yesPot} noPot={noPot} />
         </div>
