@@ -22,9 +22,13 @@ bash deploy.sh
 
 5. Last, connect your metamask (or whatever you are using) to your local network. [Reference](https://docs.metamask.io/wallet/how-to/run-devnet/)
 
+6. Switch your metamask to `Customized Transaction Nonce`.
+
 ### Restarting the Ethereum Development Server
 
-Kill the current session and restart with `bash deploy.sh` and clear the nonce in MetaMask.
+Kill the current session and restart with `bash deploy.sh`.
+
+After restarting the development server, ensure that the first transaction is executed with `nonce = 2`.
 
 ## Start the React.js Development Server
 

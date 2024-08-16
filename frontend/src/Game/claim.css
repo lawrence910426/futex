@@ -1,0 +1,102 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+body {
+    font-family: 'Roboto', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #F5F5F5;
+}
+
+.reward-card {
+    background-color: #FFFFFF;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 6px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    padding: 24px;
+    max-width: 280px;
+    margin: 0 auto;
+}
+
+.reward-card h2 {
+    color: #616161;
+    font-size: 24px;
+    margin-bottom: 8px;
+}
+
+.reward-card h1 {
+    color: #D4AF37;
+    font-size: 32px;
+    margin-bottom: 12px;
+}
+
+.reward-image {
+    width: 100%;
+    height: auto;
+    margin-bottom: 12px;
+    border-radius: 8px;
+}
+
+.md3-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 20px;
+    padding: 10px 24px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: background-color 0.3s, box-shadow 0.3s;
+    width: 90%;
+}
+
+.md3-button-filled {
+    background-color: #D4AF37;
+    color: #FFFFFF;
+}
+
+.md3-button-filled:hover {
+    background-color: #B08B33;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.md3-button-filled.unavailable {
+    background-color: #BDBDBD;
+    color: #FFFFFF;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.md3-elevation-3 {
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.12), 0px 4px 8px rgba(0, 0, 0, 0.12);
+}
+
+.reward-content {
+    display: none;
+}
+
+.reward-content.available {
+    display: block;
+}
+
+.reward-content.unavailable {
+    display: block;
+}
+
+.claiming-message span {
+    color: #D4AF37;  
+    font-size: 24px;
+    margin-bottom: 8px;
+    font-weight: bold; 
+}
+
+.success-message span {
+    color: #D4AF37;  
+    font-size: 24px;
+    margin-bottom: 8px;
+    font-weight: bold; 
+}

@@ -1,25 +1,186 @@
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
+import './App.css';
+
+const CurrentPotStatus = ({ yesBet, noBet }) => {
+    return (
+        <div className="pot-container">
+            <div className="option yes-option">
+                <span className="label">Yes pot</span>
+                <span className="amount">USDT {yesBet}</span>
+            </div>
+            <div className="divider"></div>
+            <div className="option no-option">
+                <span className="label">No Bet</span>
+                <span className="amount">USDT {noBet}</span>
+            </div>
+        </div>
+    );
+};
+
+const BettingResult = ({ yesPot, noPot }) => {
+    return (
+        <div className="pot-container">
+            <div className="option yes-option">
+                <span className="label">My yes pot</span>
+                <span className="amount">USDT {yesPot}</span>
+            </div>
+            <div className="divider"></div>
+            <div className="option no-option">
+                <span className="label">My no pot</span>
+                <span className="amount">USDT {noPot}</span>
+            </div>
+        </div>
+    );
+};
+
+const BettingComponent = ({ maxStake, contract, tokenContract, yesPot, noPot }) => {
+    const [amount, setAmount] = useState(50);
+    const [selectedSide, setSelectedSide] = useState(0);
+    const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+
+    const calculateWinOdds = (noTotal, yesTotal, bet) => {
+        return (noTotal / (yesTotal + bet)) * bet + 1;
+    };
+
+    const calculateLossOdds = (yesTotal, noTotal, bet) => {
+        return (yesTotal / (noTotal + bet)) * bet + 1;
+    };
+
+    const winOdds = calculateWinOdds(noPot, yesPot, amount);
+    const lossOdds = calculateLossOdds(yesPot, noPot, amount);
+
+    const handleAmountChange = (change) => {
+        const newAmount = (parseFloat(amount) + change).toString();
+        if (parseFloat(newAmount) >= 0) {
+            if (parseFloat(newAmount) > maxStake) {
+                setError('金额超過最大下注金額：' + maxStake);
+            } else {
+                setError('');
+                setAmount(parseFloat(newAmount));
+            }
+        }
+    };
+
+    const handleSideSelection = (side) => {
+        setSelectedSide(side);
+    };
+
+    const handleStake = async () => {
+        setIsLoading(true); // 開始顯示等待視窗
+
+        try {
+            const size = ethers.parseUnits(amount.toString(), 6);
+            
+            if(parseFloat(size) > parseFloat(maxStake)) {
+                setError('金额超過最大下注金額：' + maxStake);
+                setIsLoading(false);
+                return;
+            }
+            
+            // Approve the token transfer
+            const tx = await tokenContract.approve(contract.target, size);
+            await tx.wait();
+    
+            // Stake the tokens
+            const tx2 = await contract.stake(size, selectedSide === 1);
+            await tx2.wait();
+
+            // 成功後顯示成功訊息
+            setShowSuccessMessage(true);
+            setTimeout(() => {
+                setShowSuccessMessage(false); // 三秒後隱藏成功訊息
+            }, 3000);
+
+        } catch (err) {
+            console.error('下注過程出錯:', err);
+            setError('下注過程出錯，請重試。');
+        } finally {
+            setIsLoading(false); // 隱藏等待視窗
+        }
+    };
+
+    return (
+        <div className="betting-container">
+            <div className="betting-header">賠率</div>
+            <div className="betting-options">
+                <button
+                    className={`betting-option ${selectedSide === 1 ? 'active' : ''}`}
+                    onClick={() => handleSideSelection(1)}
+                >
+                    YES {winOdds.toFixed(2)}
+                </button>
+                <button
+                    className={`betting-option ${selectedSide === 0 ? 'active no' : ''}`}
+                    onClick={() => handleSideSelection(0)}
+                >
+                    NO {lossOdds.toFixed(2)}
+                </button>
+            </div>
+            <div className="betting-outcome">下標金額</div>
+            <div className="betting-amount-wrapper">
+                <div className={`betting-amount ${error ? 'error' : ''}`}>
+                    <button className="amount-control" onClick={() => handleAmountChange(-10)}>-</button>
+                    <input type="text" value={amount} readOnly style={{ color: amount >= maxStake ? '#CA5724' : 'black' }} />
+                    <button 
+                        className="amount-control" 
+                        onClick={() => handleAmountChange(10)} 
+                        disabled={amount > maxStake}
+                        style={amount >= maxStake ? { backgroundColor: '#F0F0F0', color: '#D9D9D9', cursor: 'not-allowed' } : {}}
+                    >+</button>
+                </div>
+                {error && <div className="error">{error}</div>}
+            </div>
+            <button className={`bet-button ${selectedSide === 0 ? 'no' : ''}`} onClick={handleStake}>
+                BET {selectedSide === 1 ? 'YES' : 'NO'}
+                <br />
+                <span className="to-win">To win USDT {(amount * (selectedSide === 1 ? winOdds : lossOdds)).toFixed(2)}</span>
+            </button>
+
+            {isLoading && (
+                <div className="loading-modal">
+                    <div className="loading-content">
+                        <h2 className="loading-text">
+                            點擊下一頁,批准及確認以下注，<br />
+                            並耐心等候......
+                        </h2>
+                    </div>
+                </div>
+            )}
+
+            {showSuccessMessage && ( // 顯示成功訊息
+                <div className="success-modal">
+                    <div className="success-content">
+                        <h2 className="success-text">下注成功！</h2>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
+
 
 const StakePage = ({ contractAddress, tokenAddress }) => {
-    const [stakeAmount, setStakeAmount] = useState('');
-    const [side, setSide] = useState(0);
     const [yesPot, setYesPot] = useState(0);
     const [noPot, setNoPot] = useState(0);
     const [yesBet, setYesBet] = useState(0);
     const [noBet, setNoBet] = useState(0);
-    const [maxStake, setMaxStake] = useState(0);
     const [signer, setSigner] = useState(null);
+    const [maxStake, setMaxStake] = useState(0);
 
     const provider = new ethers.BrowserProvider(window.ethereum);
 
     const tokenABI = [
         "function approve(address _spender, uint256 _value) public returns (bool)",
     ];
+    const tokenContract = new ethers.Contract(tokenAddress, tokenABI, signer);
 
     const contractABI = [
         "function stake(uint256 amount, bool is_win) external",
     ];
+    const contract = new ethers.Contract(contractAddress, contractABI, signer);
 
     const contractViewABI = [
         "function max_stake() public view returns (uint256)",
@@ -28,31 +189,7 @@ const StakePage = ({ contractAddress, tokenAddress }) => {
         "function Yes_Total() public view returns (uint256)",
         "function No_Total() public view returns (uint256)",
     ];
-
-    const tokenContract = new ethers.Contract(tokenAddress, tokenABI, signer);
-    const contract = new ethers.Contract(contractAddress, contractABI, signer);
     const contractView = new ethers.Contract(contractAddress, contractViewABI, provider);
-
-    const handleStake = async () => {
-        const size = ethers.parseUnits(stakeAmount, 6);
-
-        if (parseFloat(size) > parseFloat(maxStake)) {
-          alert('Your stake amount exceeds the maximum stake limit');
-          return;
-        }
-        
-        // Approve the token transfer
-        const tx = await tokenContract.approve(contractAddress, size);
-        await tx.wait();
-    
-        // Stake the tokens
-        const tx2 = await contract.stake(size, side === 1);
-        await tx2.wait();
-    };
-
-    const handleSideSelection = (selectedSide) => {
-        setSide(selectedSide);
-    };
 
     useEffect(() => {
         const getStakeTotals = async () => {
@@ -91,14 +228,15 @@ const StakePage = ({ contractAddress, tokenAddress }) => {
 
     return (
         <div>
-            <input type="number" value={stakeAmount} onChange={e => setStakeAmount(e.target.value)} />
-            <button onClick={handleStake}>Stake</button>
-            <button onClick={() => handleSideSelection(1)}>Bet Yes</button>
-            <button onClick={() => handleSideSelection(0)}>Bet No</button>
-            <p>Yes Pot: {yesPot}</p>
-            <p>No Pot: {noPot}</p>
-            <p>Your Yes Bet: {yesBet}</p>
-            <p>Your No Bet: {noBet}</p>
+            <CurrentPotStatus yesBet={yesBet} noBet={noBet} />
+            <BettingComponent 
+                maxStake={maxStake}
+                tokenContract={tokenContract}
+                contract={contract}
+                yesPot={yesPot}
+                noPot={noPot}
+            />
+            <BettingResult yesPot={yesPot} noPot={noPot} />
         </div>
     );
 };
