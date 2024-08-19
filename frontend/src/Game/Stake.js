@@ -35,7 +35,7 @@ const BettingResult = ({ yesPot, noPot }) => {
 };
 
 const BettingComponent = ({ maxStake, contract, tokenContract, yesPot, noPot }) => {
-    const [amount, setAmount] = useState(50);
+    const [amount, setAmount] = useState('50');
     const [selectedSide, setSelectedSide] = useState(0);
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -64,6 +64,22 @@ const BettingComponent = ({ maxStake, contract, tokenContract, yesPot, noPot }) 
         }
     };
 
+    const handleInputChange = (event) => {
+        const inputAmount = event.target.value;
+        if (inputAmount === '') { 
+            setAmount('0'); // 修改: 將空字符串設置為 '0'
+            setError('');
+        } else if (!isNaN(inputAmount) && parseFloat(inputAmount) >= 0) {
+            if (parseFloat(inputAmount) > maxStake) {
+                setError('金额超過最大下注金額：' + maxStake);
+            } else {
+                setError('');
+                setAmount(inputAmount); // 修改: 直接將輸入值作為字符串設置
+            }
+        } else {
+            setError('請輸入有效的金額');
+        }
+    };
     const handleSideSelection = (side) => {
         setSelectedSide(side);
     };
@@ -100,6 +116,7 @@ const BettingComponent = ({ maxStake, contract, tokenContract, yesPot, noPot }) 
         } finally {
             setIsLoading(false); // 隱藏等待視窗
         }
+
     };
 
     return (
@@ -123,7 +140,14 @@ const BettingComponent = ({ maxStake, contract, tokenContract, yesPot, noPot }) 
             <div className="betting-amount-wrapper">
                 <div className={`betting-amount ${error ? 'error' : ''}`}>
                     <button className="amount-control" onClick={() => handleAmountChange(-10)}>-</button>
-                    <input type="text" value={amount} readOnly style={{ color: amount >= maxStake ? '#CA5724' : 'black' }} />
+                    <input 
+                          type="text" 
+                          value={amount} 
+                          onChange={handleInputChange} 
+                          onKeyDown={(e) => console.log('Key Down: ', e.key)}
+                          style={{ color: parseFloat(amount) >= maxStake ? '#CA5724' : 'black' }} 
+                          onFocus={() => console.log("Input Focused")}
+                    />
                     <button 
                         className="amount-control" 
                         onClick={() => handleAmountChange(10)} 
