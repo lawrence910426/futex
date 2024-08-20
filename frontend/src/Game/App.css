@@ -270,3 +270,9 @@ button {
     color: #28a745; 
 }
 
+button:disabled {
+    background-color: #D3D3D3!important; /* 灰色背景 */
+    color: #000000!important; /* 黑色文字 */
+    font-weight: lighter!important;
+    cursor: not-allowed; /* 禁用時顯示不可用的鼠標圖標 */
+}

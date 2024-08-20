@@ -34,7 +34,7 @@ const BettingResult = ({ yesPot, noPot }) => {
     );
 };
 
-const BettingComponent = ({ maxStake, contract, tokenContract, yesPot, noPot }) => {
+const BettingComponent = ({ maxStake, contract, tokenContract, yesPot, noPot, canStake }) => {  // 修改: 添加 canStake prop
     const [amount, setAmount] = useState('50');
     const [selectedSide, setSelectedSide] = useState(0);
     const [error, setError] = useState('');
@@ -126,12 +126,14 @@ const BettingComponent = ({ maxStake, contract, tokenContract, yesPot, noPot }) 
                 <button
                     className={`betting-option ${selectedSide === 1 ? 'active' : ''}`}
                     onClick={() => handleSideSelection(1)}
+                    disabled={!canStake}
                 >
                     YES {winOdds.toFixed(2)}
                 </button>
                 <button
                     className={`betting-option ${selectedSide === 0 ? 'active no' : ''}`}
                     onClick={() => handleSideSelection(0)}
+                    disabled={!canStake}
                 >
                     NO {lossOdds.toFixed(2)}
                 </button>
@@ -147,6 +149,7 @@ const BettingComponent = ({ maxStake, contract, tokenContract, yesPot, noPot }) 
                           onKeyDown={(e) => console.log('Key Down: ', e.key)}
                           style={{ color: parseFloat(amount) >= maxStake ? '#CA5724' : 'black' }} 
                           onFocus={() => console.log("Input Focused")}
+                          disabled={!canStake}
                     />
                     <button 
                         className="amount-control" 
@@ -157,7 +160,11 @@ const BettingComponent = ({ maxStake, contract, tokenContract, yesPot, noPot }) 
                 </div>
                 {error && <div className="error">{error}</div>}
             </div>
-            <button className={`bet-button ${selectedSide === 0 ? 'no' : ''}`} onClick={handleStake}>
+            <button 
+                className={`bet-button ${selectedSide === 0 ? 'no' : ''}`} 
+                onClick={handleStake}
+                disabled={!canStake}  // 修改: 根據 canStake 來決定按鈕是否可用
+            >
                 BET {selectedSide === 1 ? 'YES' : 'NO'}
                 <br />
                 <span className="to-win">To win USDT {(amount * (selectedSide === 1 ? winOdds : lossOdds)).toFixed(2)}</span>
@@ -193,6 +200,7 @@ const StakePage = ({ contractAddress, tokenAddress }) => {
     const [noBet, setNoBet] = useState(0);
     const [signer, setSigner] = useState(null);
     const [maxStake, setMaxStake] = useState(0);
+    const [canStake, setCanStake] = useState(false);  // 修改: 新增 canStake 狀態
 
     const provider = new ethers.BrowserProvider(window.ethereum);
 
@@ -212,6 +220,7 @@ const StakePage = ({ contractAddress, tokenAddress }) => {
         "function No_Traders(address) view returns (uint256)",
         "function Yes_Total() public view returns (uint256)",
         "function No_Total() public view returns (uint256)",
+        "function can_stake() public view returns (bool)",  // 修改: 從後端檢查是否可以下注
     ];
     const contractView = new ethers.Contract(contractAddress, contractViewABI, provider);
 
@@ -243,11 +252,17 @@ const StakePage = ({ contractAddress, tokenAddress }) => {
             const signer = await provider.getSigner();
             setSigner(signer);
         };
+
+        const checkCanStake = async () => {  // 修改: 新增檢查是否可以下注的函數
+            const stakeStatus = await contractView.can_stake();
+            setCanStake(stakeStatus);
+        };
         
         getStakeTotals();
         getUserStakes();
         getMaxStake();
         loadSigner();
+        checkCanStake();  // 修改: 在載入時檢查是否可以下注
     }, [contractView]);
 
     return (
@@ -259,6 +274,7 @@ const StakePage = ({ contractAddress, tokenAddress }) => {
                 contract={contract}
                 yesPot={yesPot}
                 noPot={noPot}
+                canStake={canStake}  // 修改: 傳遞 canStake 作為 prop
             />
             <BettingResult yesPot={yesPot} noPot={noPot} />
         </div>

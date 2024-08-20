@@ -31,7 +31,7 @@ contract Game {
         Yes_Total = 0;
         No_Total = 0;
         owner = msg.sender;
-        stake_deadline = _stake_deadline;
+        stake_deadline = _stake_deadline; 
         settlement = _settlement;
         Maximum_Stake = _maximum_stake;
 
