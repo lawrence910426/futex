@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
-import './claim.css';
 
 const EnsureWalletConnection = ({ children }) => {
   const [isConnected, setIsConnected] = useState(false);
@@ -27,10 +26,12 @@ const EnsureWalletConnection = ({ children }) => {
   }, []);
 
   if (!isConnected) {
-    return <div className="claiming-message">
-              <span className="md3-headline-small">
-              請確保metamask連接正常<br /></span>
-        </div>                    
+    return <div className="success-modal">
+                <div className="success-content">
+                  <span className="warning-message">
+                    請確保metamask連接正常<br /></span>
+                </div>
+          </div>
   }
 
   return React.Children.map(children, child => {
