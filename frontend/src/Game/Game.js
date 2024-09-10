@@ -10,7 +10,7 @@ if (process.env.NODE_ENV === 'development') {
 
 const Game = ({}) => {   
     const query = new URLSearchParams(window.location.search);
-    const contractAddress = query.get('contractAddress') || config.CONTRACT_ADDRESS;
+    const contractAddress = query.get('contractAddress') || config.DEFAULT_CONTRACT_ADDRESS;
     const viewMode = query.get('viewMode') || "stake";
     const tokenAddress = config.TOKEN_ADDRESS;
 
