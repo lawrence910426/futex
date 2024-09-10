@@ -29,7 +29,7 @@ const EnsureWalletConnection = ({ children }) => {
     return <div className="success-modal">
                 <div className="success-content">
                   <span className="warning-message">
-                    請確保metamask連接正常<br /></span>
+                    請確保電子錢包連接正常<br /></span>
                 </div>
           </div>
   }
