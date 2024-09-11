@@ -85,8 +85,11 @@ const BettingComponent = ({ maxStake, contract, tokenContract, yesPot, noPot, ca
     };
 
     const handleStake = async () => {
+        // 在開始下注過程前清除錯誤與成功訊息
+        setError('');
+        setShowSuccessMessage(false);
         setIsLoading(true); 
-
+    
         try {
             const size = ethers.parseUnits(amount.toString(), 6);
             
@@ -102,7 +105,6 @@ const BettingComponent = ({ maxStake, contract, tokenContract, yesPot, noPot, ca
             const tx2 = await contract.stake(size, selectedSide === 1);
             await tx2.wait();
         
-            setError(''); // 清除錯誤訊息
             setShowSuccessMessage(true);
             setTimeout(() => {
                 setShowSuccessMessage(false);
@@ -115,6 +117,7 @@ const BettingComponent = ({ maxStake, contract, tokenContract, yesPot, noPot, ca
             setIsLoading(false);
         }
     };
+    
 
     useEffect(() => {
         const handleBeforeUnload = (e) => {
