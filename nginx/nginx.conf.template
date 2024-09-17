@@ -6,10 +6,6 @@ http {
 
         root /usr/share/nginx/html;
         index index.html;
-
-        location ^~ /game/ {
-            try_files $uri $uri/ /index.html;
-        }
         
         location / {
             proxy_pass http://wordpress;

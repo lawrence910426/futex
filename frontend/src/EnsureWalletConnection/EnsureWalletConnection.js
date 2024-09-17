@@ -26,12 +26,7 @@ const EnsureWalletConnection = ({ children }) => {
   }, []);
 
   if (!isConnected) {
-    return <div className="success-modal">
-                <div className="success-content">
-                  <span className="warning-message">
-                    請確保電子錢包連接正常<br /></span>
-                </div>
-          </div>
+    return <div>Please connect to your wallet or refresh your browser.</div>;
   }
 
   return React.Children.map(children, child => {
