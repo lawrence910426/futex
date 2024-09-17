@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import './App.css';
 
+const canStake = true;
 const CurrentPotStatus = ({ yesBet, noBet }) => {
     return (
         <div className="pot-container">
