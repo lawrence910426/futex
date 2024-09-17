@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import './App.css';
 
-const canStake = true;
+
 const CurrentPotStatus = ({ yesBet, noBet }) => {
     return (
         <div className="pot-container">
@@ -202,6 +202,8 @@ const StakePage = ({ contractAddress, tokenAddress }) => {
     const [noBet, setNoBet] = useState(0);
     const [signer, setSigner] = useState(null);
     const [maxStake, setMaxStake] = useState(0);
+    const [canStake, setCanStake] = useState(false);  
+    const [showHelp, setShowHelp] = useState(false); 
 
     const provider = new ethers.BrowserProvider(window.ethereum);
 
@@ -252,11 +254,17 @@ const StakePage = ({ contractAddress, tokenAddress }) => {
             const signer = await provider.getSigner();
             setSigner(signer);
         };
+
+        const checkCanStake = async () => {  
+            const stakeStatus = await contractView.can_stake();
+            setCanStake(stakeStatus);
+        };
         
         getStakeTotals();
         getUserStakes();
         getMaxStake();
         loadSigner();
+        checkCanStake();  
     }, [contractView]);
 
     return (
