@@ -43,6 +43,13 @@ button {
     position: relative;
 }
 
+
+.betting-option-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .betting-header, .betting-outcome {
     font-size: 18px;
     margin-bottom: 10px;
@@ -59,10 +66,32 @@ button {
     background-color: #e0e0e0;
     border: none;
     border-radius: 20px;
-    padding: 10px 20px;
+    padding: 10px 40px;
     font-size: 16px;
     cursor: pointer;
     outline: none;
+}
+
+.odds-label.yes {
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: #777;
+    font-weight: bold;  
+}
+
+.odds-label.no {
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: #777;
+    font-weight: bold;  
+}
+
+.odds-label.yes.active {
+    color: #60AA69;  /* 綠色 */
+}
+
+.odds-label.no.active {
+    color: #CA5724;  /* 紅色 */
 }
 
 .betting-option.active {
