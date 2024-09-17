@@ -136,22 +136,29 @@ const BettingComponent = ({ maxStake, contract, tokenContract, yesPot, noPot, ca
     
     return (
         <div className="betting-container">
-            <div className="betting-options">
-                <button
-                    className={`betting-option ${selectedSide === 1 ? 'active' : ''}`}
-                    onClick={() => handleSideSelection(1)}
-                    disabled={!canStake}
-                >
-                    會的賠率：{winOdds.toFixed(2)}
-                </button>
-                <button
-                    className={`betting-option ${selectedSide === 0 ? 'active no' : ''}`}
-                    onClick={() => handleSideSelection(0)}
-                    disabled={!canStake}
-                >
-                    不會的賠率： {lossOdds.toFixed(2)}
-                </button>
+            <div class="betting-options">
+                <div className="betting-option-container">
+                    <span className={`odds-label yes ${selectedSide === 1 ? 'active' : ''}`}>會的賠率</span>
+                    <button
+                        className={`betting-option ${selectedSide === 1 ? 'active' : ''}`}
+                        onClick={() => handleSideSelection(1)}
+                        disabled={!canStake}
+                    >
+                        {winOdds.toFixed(2)}
+                    </button>
+                </div>
+                <div className="betting-option-container">
+                    <span className={`odds-label no ${selectedSide === 0 ? 'active' : ''}`}>不會的賠率</span>
+                    <button
+                        className={`betting-option no ${selectedSide === 0 ? 'active' : ''}`}
+                        onClick={() => handleSideSelection(0)}
+                        disabled={!canStake}
+                    >
+                        {lossOdds.toFixed(2)}
+                    </button>
+                </div>
             </div>
+
             <div className="betting-outcome">下標金額</div>
             <div className="betting-amount-wrapper">
                 <div className={`betting-amount ${error ? 'error' : ''}`}>
