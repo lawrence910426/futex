@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import './App.css';
 
-const canStake = true;
+
 const CurrentPotStatus = ({ yesBet, noBet }) => {
     return (
         <div className="pot-container">
@@ -35,7 +35,7 @@ const BettingResult = ({ yesPot, noPot }) => {
     );
 };
 
-const BettingComponent = ({ maxStake, contract, tokenContract, yesPot, noPot }) => {
+const BettingComponent = ({ maxStake, contract, tokenContract, yesPot, noPot, canStake}) => {
     const [amount, setAmount] = useState('50');
     const [selectedSide, setSelectedSide] = useState(0);
     const [error, setError] = useState('');
@@ -202,6 +202,8 @@ const StakePage = ({ contractAddress, tokenAddress }) => {
     const [noBet, setNoBet] = useState(0);
     const [signer, setSigner] = useState(null);
     const [maxStake, setMaxStake] = useState(0);
+    const [canStake, setCanStake] = useState(false);  
+    const [showHelp, setShowHelp] = useState(false); 
 
     const provider = new ethers.BrowserProvider(window.ethereum);
 
@@ -221,6 +223,7 @@ const StakePage = ({ contractAddress, tokenAddress }) => {
         "function No_Traders(address) view returns (uint256)",
         "function Yes_Total() public view returns (uint256)",
         "function No_Total() public view returns (uint256)",
+        "function can_stake() public view returns (bool)"
     ];
     const contractView = new ethers.Contract(contractAddress, contractViewABI, provider);
 
@@ -252,11 +255,17 @@ const StakePage = ({ contractAddress, tokenAddress }) => {
             const signer = await provider.getSigner();
             setSigner(signer);
         };
+
+        const checkCanStake = async () => {  
+            const stakeStatus = await contractView.can_stake();
+            setCanStake(stakeStatus);
+        };
         
         getStakeTotals();
         getUserStakes();
         getMaxStake();
         loadSigner();
+        checkCanStake();  
     }, [contractView]);
 
     return (
@@ -268,8 +277,22 @@ const StakePage = ({ contractAddress, tokenAddress }) => {
                 contract={contract}
                 yesPot={yesPot}
                 noPot={noPot}
+                canStake={canStake}  
             />
             <BettingResult yesPot={yesPot} noPot={noPot} />
+            <button className="help-button" onClick={() => setShowHelp(!showHelp)}>?</button> 
+                {showHelp && (
+                    <div className="help-card show"> {/* 顯示幫助訊息字卡 */}
+                        <h4>（註：下注過程的等待時間可能長達30秒至1分鐘，請耐心等候，謝謝！）</h4>
+                        <h4>賠率的計算</h4>
+                        <p>賠率簡單來說，就是你下注後能贏多少錢。在這裡，我們的賠率會根據大家怎麼下注來變動：</p>
+                        <h5>贏的賠率：</h5>
+                        <p>如果你選擇的結果比較少人下注，那麼你的回報會比較高。意思是，你選了一個大家不太看好的選項，如果你贏了，你就能拿回更多錢。</p>
+                        <h5>輸的賠率：</h5>
+                        <p>如果你選的結果很多人下注，即使你輸了，損失也不會太大。這是因為賠率比較低。</p>
+                        <p>總的來說，賠率會根據大家的下注情況來決定，如果你押的是冷門選項，贏了就賺得多；如果押熱門選項，輸了也不會虧太多。這樣你可以選擇風險大或小的下注方式。</p>
+                    </div>
+            )}
         </div>
     );
 };
