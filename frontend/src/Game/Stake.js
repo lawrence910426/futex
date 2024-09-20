@@ -7,12 +7,12 @@ const CurrentPotStatus = ({ yesBet, noBet }) => {
     return (
         <div className="pot-container">
             <div className="option yes-option">
-                <span className="label">Yes pot</span>
+                <span className="label">會（總下注）</span>
                 <span className="amount">USDT {yesBet}</span>
             </div>
             <div className="divider"></div>
             <div className="option no-option">
-                <span className="label">No Bet</span>
+                <span className="label">不會（總下注）</span>
                 <span className="amount">USDT {noBet}</span>
             </div>
         </div>
@@ -23,12 +23,12 @@ const BettingResult = ({ yesPot, noPot }) => {
     return (
         <div className="pot-container">
             <div className="option yes-option">
-                <span className="label">My yes pot</span>
+                <span className="label">會（個人）</span>
                 <span className="amount">USDT {yesPot}</span>
             </div>
             <div className="divider"></div>
             <div className="option no-option">
-                <span className="label">My no pot</span>
+                <span className="label">不會（個人）</span>
                 <span className="amount">USDT {noPot}</span>
             </div>
         </div>
@@ -167,7 +167,7 @@ const BettingComponent = ({ maxStake, contract, tokenContract, yesPot, noPot, ca
                 {error && <div className="error">{error}</div>}
             </div>
             <button className={`bet-button ${selectedSide === 0 ? 'no' : ''}`} onClick={handleStake}>
-                BET {selectedSide === 1 ? 'YES' : 'NO'}
+                下注 {selectedSide === 1 ? '會' : '不會'}
                 <br />
                 <span className="to-win">To win USDT {(amount * (selectedSide === 1 ? winOdds : lossOdds)).toFixed(2)}</span>
             </button>
