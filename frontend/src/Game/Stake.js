@@ -169,7 +169,7 @@ const BettingComponent = ({ maxStake, contract, tokenContract, yesPot, noPot, ca
             <button className={`bet-button ${selectedSide === 0 ? 'no' : ''}`} onClick={handleStake}>
                 下注 {selectedSide === 1 ? '會' : '不會'}
                 <br />
-                <span className="to-win">To win USDT {(amount * (selectedSide === 1 ? winOdds : lossOdds)).toFixed(2)}</span>
+                <span className="to-win">以贏得 USDT {(amount * (selectedSide === 1 ? winOdds : lossOdds)).toFixed(2)}</span>
             </button>
 
             {isLoading && (
