@@ -299,3 +299,62 @@ button {
     color: #28a745; 
 }
 
+/* 圓形黃色幫助按鈕樣式 */
+.help-button {
+    background-color: #D2B87C;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed; /* 固定位置 */
+    bottom: 20px; /* 底部距離 */
+    right: 20px; /* 右邊距離 */
+    z-index: 1000; /* 確保按鈕位於頁面頂部 */
+}
+
+/* 幫助提示卡樣式 */
+.help-card {
+    display: none; /* 初始狀態隱藏 */
+    position: fixed;
+    bottom: 80px; /* 放置在幫助按鈕上方 */
+    right: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    max-width: 300px;
+    z-index: 1000;
+}
+
+/* 顯示卡片時的樣式 */
+.help-card.show {
+    display: block; /* 顯示卡片 */
+}
+
+/* 卡片內標題和內容的樣式 */
+.help-card h4 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+}
+
+.help-card p {
+    font-size: 14px;
+    margin: 10px 0 0;
+    color: #555;
+}
+
+.help-card h5 {
+    margin-top: 10px;
+    font-size: 16px;
+    color: #444;
+}
+
